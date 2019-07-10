@@ -1,20 +1,20 @@
 import java.util.ArrayList;
 import java.util.Scanner;
-
+ 
 public class TicTacToe 
 {
-    private static boolean gameEnded = false;
+    static boolean gameEnded = false;
     private static boolean player = true;
     private static Scanner in = new Scanner(System.in);
-    private static Board board = new Board();
-
+    public static Board board = new Board();
+ 
     public static void main(String[] args)
     {
         System.out.println(board);
         while(!gameEnded)
         {
             Position position = null;
-            if(player)
+            if(getPlayerValue())
             {
                 position = makeMove();
                 board = new Board(board, position, PlayerSign.Cross);
@@ -25,13 +25,13 @@ public class TicTacToe
                 board = findBestMove(board);
                 System.out.print("Computer's Move");
             }               
-            player = !player;	
+            setPlayer(!getPlayerValue());	
             System.out.println(board);
             evaluateGame();
         }
     }
-
-    private static Board findBestMove(Board board) 
+ 
+    public static Board findBestMove(Board board) 
     {
         ArrayList<Position> positions = board.getFreePositions();
         Board bestChild = null;
@@ -39,7 +39,7 @@ public class TicTacToe
         for(Position p : positions)
         {
             Board child = new Board(board, p, PlayerSign.Circle);
-            int current = min(child);
+            int current = min(child , Integer.MIN_VALUE , Integer.MAX_VALUE);
             if(current > previous)
             {
                 bestChild = child;
@@ -48,8 +48,8 @@ public class TicTacToe
         }
         return bestChild;
     }
-
-    public static int max(Board board)
+ 
+    public static int max(Board board , int alpha , int beta)
     {
         GameState gameState = board.getGameState();
         if(gameState == GameState.CircleWin)
@@ -63,14 +63,16 @@ public class TicTacToe
         for(Position p : positions)
         {
             Board b = new Board(board, p, PlayerSign.Circle);
-            int move = min(b);
-            if(move > best)
-                best = move;
+            int move = min(b , alpha , beta);
+            best = Math.max(best, move); 
+            alpha = Math.max(alpha, best); 
+            if (beta <= alpha) 
+                break; 
         }       
         return best;
     }
-
-    public static int min(Board board)
+ 
+    public static int min(Board board , int alpha , int beta)
     {
         GameState gameState = board.getGameState();
         if(gameState == GameState.CircleWin)
@@ -84,13 +86,16 @@ public class TicTacToe
         for(Position p : positions)
         {
             Board b = new Board(board, p, PlayerSign.Cross);
-            int move = max(b);
-            if(move < best)
-                best = move;
+            int move = max(b , alpha , beta );
+            best = Math.min(best, move); 
+            beta = Math.min(beta, best); 
+            // Alpha Beta Pruning 
+            if (beta <= alpha) 
+                break; 
         }
         return best;
     }
-
+ 
     public static void evaluateGame()
     {
         GameState gameState = board.getGameState();
@@ -110,15 +115,15 @@ public class TicTacToe
                 break;
         }
     }
-
+ 
     public static Position makeMove()
     {
         Position position = null;
         while(true)
         {
-            System.out.print("Select row(y-axis). 0, 1 or 2: ");
+            System.out.print("Select row(y-axis): ");
             int row = getColOrRow();
-            System.out.print("Select column(x-axis). 0, 1 or 2: ");
+            System.out.print("Select column(x-axis): ");
             int column = getColOrRow();
             position = new Position(column, row);
             if(board.isMarked(position))
@@ -127,7 +132,7 @@ public class TicTacToe
         }
         return position;
     }
-
+ 
     private static int getColOrRow()
     {
         int ret = -1;
@@ -139,24 +144,35 @@ public class TicTacToe
             } 
             catch (NumberFormatException e){}
             
-            if(ret < 0 | ret > 2)
+            if(ret < 0 | ret > (Board.DIM-1))
                 System.out.print("\nIllegal input... please re-enter: ");
             else break;
         }
         return ret;
     }
+ 
+	public static boolean getPlayerValue() 
+	{
+		return player;
+	}
+ 
+	public static void setPlayer(boolean player) 
+	{
+		TicTacToe.player = player;
+	}
+	
+	public static PlayerSign getCurrentPlayer()
+	{
+		return player? PlayerSign.Cross:PlayerSign.Circle;
+	}
 }
-
+ 
 enum PlayerSign
 {
     Cross, Circle
 }
-
+ 
 enum GameState 
 {
     Incomplete, CrossWin, CircleWin, Draw
 }
-
-
-
-
