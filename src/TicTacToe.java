@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Scanner;
  
+//Uses minimax algorithm with alpha-beta pruning
 public class TicTacToe 
 {
     static boolean gameEnded = false;
