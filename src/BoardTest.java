@@ -45,26 +45,6 @@ class BoardTest
 		assertTrue(new Board("  x  x  x").hasWon('x'));
 	}
 	
-//	@SuppressWarnings("deprecation")
-//	@Test
-//	public void testPossibleMoves() throws Exception
-//	{
-//		Board board=new Board();
-//		ArrayList<Position> list=new ArrayList<>();
-//		for(int i=0;i<Position.SIZE;i++)
-//			list.add(new Position());
-//		list.remove(new Integer(1));
-//		list.remove(new Integer(2));
-//		assertEquals(list,position.move(1).move(2).PossibleMoves());
-//
-//		/* We are placing an 'x' and 'o' at index 1 and 2
-//		 * therefore all indexes apart from 1 and 2 will be
-//		 * unoccupied and therefore will be all returned in a
-//		 * list by the method PossibleMoves()
-//		 */
-//	}
-	
-	
 	@Test
 	public void testgetFreePositions() throws Exception
 	{
